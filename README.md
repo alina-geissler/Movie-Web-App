@@ -34,7 +34,7 @@ Movie-Web-App/
 │   └── movies.db   # SQLite database
 ├── static/
 │   ├── images/
-│   │   └── fallback_poster.png # default movie poster
+│   │   └── fallback_poster.png   # default movie poster
 │   └── style.css
 ├── templates/
 │   ├── base.html   # Bootstrap base template
