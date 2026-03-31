@@ -7,6 +7,14 @@ This project is the **conceptual successor** to my earlier **CLI Movie-Project**
 its core idea into a **full web app** with OMDb API integration, multi-user support, 
 full CRUD operations, and a responsive Bootstrap UI.
 
+## :rocket: Live Demo
+
+**This project is deployed on PythonAnywhere and can be accessed here:**    
+
+https://ombe.pythonanywhere.com/  
+
+
+
 ## :sparkles: Features
 
 - **Multi-User Support**: Each user has their own movie collection
