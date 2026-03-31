@@ -4,6 +4,8 @@ CineStash: Flask movie collection manager.
 Fetches movie data from OMDb API, stores in SQLite via SQLAlchemy.
 CRUD operations for users and personal movie collections.
 Responsive Bootstrap frontend.
+
+See README.md for setup and features.
 """
 
 import os
@@ -36,6 +38,11 @@ data_manager = DataManager()
 
 @app.route('/')
 def index():
+    """
+    Display the users overview page.
+    Load all users and render the index template.
+    :return: rendered template with users list or with flash message if db query fails
+    """
     try:
         users = data_manager.get_users()
     except SQLAlchemyError:
@@ -46,6 +53,10 @@ def index():
 
 @app.route('/users', methods=['POST'])
 def create_user():
+    """
+    Create a new user from POST form data.
+    :return: redirect to index page after success/failure with appropriate flash message
+    """
     new_user = request.form['new_user']
     try:
         data_manager.create_user(new_user)
@@ -56,9 +67,14 @@ def create_user():
     return redirect(url_for('index'))
 
 
-
 @app.route('/users/<int:user_id>/movies', methods=['GET'])
 def list_movies(user_id):
+    """
+    Display all movies for a specific user.
+    :param user_id: ID of user whose movies to display
+    :return: rendered 'movies.html' with user and their movies if success
+    or redirect to index page if db query fails (+ appropriate flash message)
+    """
     try:
         user = db.session.get(User, user_id)
         if not user:
@@ -75,9 +91,14 @@ def list_movies(user_id):
     return render_template('movies.html', movies=user_movies, user=user)
 
 
-
 @app.route('/users/<int:user_id>/movies', methods=['POST'])
 def add_movie(user_id):
+    """
+    Add a new movie to user's collection via OMDb API lookup.
+    Get movie title to add and optional release year from POST form.
+    :param user_id: ID of user to add movie for
+    :return: redirect to movies page with success/error flash message
+    """
     movie_to_add = request.form.get('new_movie')
     year = request.form.get('release_year')
     if not OMDB_API_KEY:
@@ -87,7 +108,6 @@ def add_movie(user_id):
 
     try:
         res = requests.get(request_url, timeout=(3.0, 5.0))  # timeout: 3s connect, 5s read
-        # TODO: absichern (siehe voriges Movie-Projekt + Review !!!) -> auch timeout...
         movie_info = res.json()
         if movie_info.get("Error") == "Movie not found!":
             flash('No matching movie found to add.', 'danger')
@@ -145,6 +165,12 @@ def add_movie(user_id):
 
 @app.route('/users/<int:user_id>/movies/<int:movie_id>/update', methods=['POST'])
 def update_movie(user_id, movie_id):
+    """
+    Update movie title via POST form.
+    :param user_id: ID of user to update movie for
+    :param movie_id: ID of movie to update
+    :return: redirect to movie page with success/error flash message
+    """
     try:
         new_title = request.form['update_movie']
         data_manager.update_movie(movie_id, new_title)
@@ -156,6 +182,12 @@ def update_movie(user_id, movie_id):
 
 @app.route('/users/<int:user_id>/movies/<int:movie_id>/delete', methods=['POST'])
 def delete_movie(user_id, movie_id):
+    """
+    Delete movie by ID via POST request.
+    :param user_id: ID of user to delete movie for
+    :param movie_id: ID of movie to delete
+    :return: redirect to movie page with success/error flash message
+    """
     try:
         movie_to_delete = Movie.query.get_or_404(movie_id)
         data_manager.delete_movie(movie_id)
@@ -194,6 +226,6 @@ def internal_server_error(error):
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        db.create_all()  # only creates the tables if they do not already exist
 
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)

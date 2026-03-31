@@ -1,3 +1,9 @@
+"""
+Data Models for CineStash movie collection app.
+Relationship: User 1:n Movie
+Foreign Keys: movie.user_id → user.user_id
+"""
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
