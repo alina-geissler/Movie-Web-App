@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<br><br>
+<div class="alert alert-danger">
+  <strong>500 – Internal Server Error</strong><br><br>
+  Something went wrong on our end. Please try again later.<br>
+  If the problem persists, the database may be temporarily unavailable.
+</div>
+<br>
+
+<a href="{{ url_for('index') }}" class="back-link">&larr; Go back to Users / Home page</a>
+<br>
+
+{% endblock %}

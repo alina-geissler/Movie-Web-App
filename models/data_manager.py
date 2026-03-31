@@ -1,12 +1,19 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from .data_models import db, User, Movie
 
 
 class DataManager:
     @staticmethod
     def create_user(name):
-        new_user = User(user_name=name)
-        db.session.add(new_user)
-        db.session.commit()
+        new_user = User(name=name)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise
+
 
     @staticmethod
     def get_users():
@@ -15,25 +22,36 @@ class DataManager:
 
     @staticmethod
     def get_movies(user_id):
-        user = User.query.get(user_id)
-        movies = user.movies.all()
+        movies = Movie.query.filter_by(user_id=user_id)
         return movies
 
     @staticmethod
     def add_movie(movie):
-        db.session.add(movie)
-        db.session.commit()
+        try:
+            db.session.add(movie)
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise
 
     @staticmethod
     def update_movie(movie_id, new_title):
-        movie_to_update = Movie.query.get(movie_id)
-        if movie_to_update:
-            movie_to_update.movie_title = new_title
-            db.session.commit()
+        try:
+            movie_to_update = db.session.get(Movie, movie_id)
+            if movie_to_update:
+                movie_to_update.title = new_title
+                db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise
 
     @staticmethod
     def delete_movie(movie_id):
-        movie_to_delete = Movie.query.get(movie_id)
-        if movie_to_delete:
-            db.session.delete(movie_to_delete)
-            db.session.commit()
+        try:
+            movie_to_delete = db.session.get(Movie, movie_id)
+            if movie_to_delete:
+                db.session.delete(movie_to_delete)
+                db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise

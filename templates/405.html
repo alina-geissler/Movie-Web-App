@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<br><br>
+<div class="alert alert-danger">
+  <strong>405 – Method Not Allowed</strong><br><br>
+  This action cannot be performed directly via the browser address bar.<br>
+  Please use the forms provided on the relevant pages.
+</div>
+<br>
+
+<a href="{{ url_for('index') }}" class="back-link">&larr; Go back to Users / Home page</a>
+<br>
+
+{% endblock %}

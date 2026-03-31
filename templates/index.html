@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Users</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+{% endwith %}
+
+<ul class="user-list">
+    {% for user  in users %}
+        <li class="user-entry">
+            <div class="user-name"><strong>{{ user.name }}</strong></div>
+            <a href="{{ url_for('list_movies', user_id=user.user_id) }}"><button type="button">Show movies</button></a><br><br>
+        </li>
+    {% endfor %}
+</ul>
+
+<br>
+<form action="{{ url_for('create_user') }}" method="POST">
+    <label for="new_user"><strong>Add New User</strong></label><br>
+    <input type="text" id="new_user" name="new_user" placeholder="User Name" required>
+    <input type="submit" value="Add User">
+</form>
+
+{% endblock %}

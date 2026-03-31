@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<a href="{{ url_for('index') }}" class="back-link">&larr; Back to Users</a><br><br>
+
+<h1>Movies for {{ user.name }}</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+{% endwith %}
+
+<ul class="movie-grid">
+    {% for movie in movies %}
+        <li class="movie">
+            <img class="movie-poster"
+                 src="{{ movie.poster_url  or '/static/images/fallback_poster.png' }}"
+                 alt="Poster of movie {{ movie.title }}"
+                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/fallback_poster.png') }}';">
+            <br><br>
+            <form action="{{ url_for('update_movie', user_id=user.user_id, movie_id=movie.movie_id) }}" method="POST">
+                <input type="text" id="update_movie" name="update_movie" value="{{ movie.title }}" aria-label="New Title" required>
+                <input type="submit" value="Update">
+            </form>
+            <br>
+            <div class="release-year"><strong>Year:</strong> {{ movie.release_year or '-' }}</div>
+            <div class="director"><strong>Director:</strong> {{ movie.director or '-' }}</div><br>
+            <form action="{{ url_for('delete_movie', user_id=movie.user_id, movie_id=movie.movie_id) }}" method="POST">
+                <input type="submit" value="Delete">
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<form action="{{ url_for('add_movie', user_id=user.user_id) }}" method="POST">
+    <h2>Add New Movie</h2>
+    <input type="text" id="new_movie" name="new_movie" placeholder="Movie title"  aria-label="New Movie" required><br>
+    <input type="number" id="release_year" name="release_year" placeholder="Year (optional)" aria-label="Release Year">
+    <input type="submit" value="Add Movie">
+</form>
+
+{% endblock %}
