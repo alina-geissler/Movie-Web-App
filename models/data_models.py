@@ -24,6 +24,6 @@ class Movie(db.Model):
     poster_url = db.Column(db.String, nullable=True)
     rating = db.Column(db.Float, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    user = db.relationship('User', backref='movies')
+    user = db.relationship('User', backref=db.backref('movies', cascade='all, delete-orphan'))
 
 

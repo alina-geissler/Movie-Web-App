@@ -44,8 +44,6 @@ def stars_filter(rating):
     return num_stars
 
 
-
-
 @app.route('/')
 def index():
     """
@@ -74,6 +72,22 @@ def create_user():
         return redirect(url_for('index'))
     except SQLAlchemyError:
         flash('Could not create new user. Please try again.', 'danger')
+    return redirect(url_for('index'))
+
+
+@app.route('/users/<int:user_id>/delete', methods=['POST'])
+def delete_user(user_id):
+    """
+    Delete user by ID via POST request.
+    :param user_id: ID of user to delete
+    :return: redirect to index page with success/error flash message
+    """
+    try:
+        user_to_delete = User.query.get_or_404(user_id)
+        data_manager.delete_user(user_id)
+        flash(f'User "{user_to_delete.name}" deleted successfully!', 'success')
+    except SQLAlchemyError:
+        flash('Could not delete user. Please try again.', 'danger')
     return redirect(url_for('index'))
 
 
@@ -183,8 +197,8 @@ def add_movie(user_id):
     return redirect(url_for('list_movies', user_id=user_id))
 
 
-@app.route('/users/<int:user_id>/movies/<int:movie_id>/update', methods=['POST'])
-def update_movie(user_id, movie_id):
+@app.route('/users/<int:user_id>/movies/<int:movie_id>/update/title', methods=['POST'])
+def update_movie_title(user_id, movie_id):
     """
     Update movie title via POST form.
     :param user_id: ID of user to update movie for
@@ -192,11 +206,35 @@ def update_movie(user_id, movie_id):
     :return: redirect to movie page with success/error flash message
     """
     try:
-        new_title = request.form['update_movie']
-        data_manager.update_movie(movie_id, new_title)
+        new_title = request.form['update_movie_title']
+        data_manager.update_movie_title(movie_id, new_title)
         flash(f'Movie "{new_title}" updated successfully!', 'success')
     except SQLAlchemyError:
-        flash('Could not update movie. Please try again.')
+        flash('Could not update movie title. Please try again.')
+    return redirect(url_for('list_movies', user_id=user_id))
+
+
+@app.route('/users/<int:user_id>/movies/<int:movie_id>/update/rating', methods=['POST'])
+def update_movie_rating(user_id, movie_id):
+    """
+    Update movie rating via POST form.
+    :param user_id: ID of user to update movie for
+    :param movie_id: ID of movie to update
+    :return: redirect to movie page with success/error flash message
+    """
+    try:
+        new_rating = float(request.form['update_movie_rating'])
+        if not 0 <= new_rating <= 10:
+            raise ValueError
+    except ValueError:
+        flash('Rating must be a number between 0 and 10.', 'danger')
+        return redirect(url_for('list_movies', user_id=user_id))
+
+    try:
+        data_manager.update_movie_rating(movie_id, new_rating)
+        flash('Rating updated successfully!', 'success')
+    except SQLAlchemyError:
+        flash('Could not update rating. Please try again.')
     return redirect(url_for('list_movies', user_id=user_id))
 
 

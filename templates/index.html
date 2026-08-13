@@ -15,8 +15,11 @@
     {% for user  in users %}
         <li class="user-entry">
             <div class="user-name"><strong>{{ user.name }}</strong></div>
-            <a href="{{ url_for('list_movies', user_id=user.user_id) }}"><button type="button">Show movies</button></a><br><br>
-        </li>
+            <a href="{{ url_for('list_movies', user_id=user.user_id) }}"><button type="button">Show movies</button></a>
+            <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST" onsubmit="return confirm('Delete {{ user.name }} and all their movies? This cannot be undone.');">
+                <input type="submit" value="Delete User">
+            </form>
+        </li><br>
     {% endfor %}
 </ul>
 

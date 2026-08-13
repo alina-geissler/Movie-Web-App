@@ -35,6 +35,22 @@ class DataManager:
         return users
 
     @staticmethod
+    def delete_user(user_id):
+        """
+        Delete a user from the database.
+        Raise SQLAlchemyError if database operation fails.
+        :param user_id: ID of the user to delete
+        """
+        try:
+            user_to_delete = db.session.get(User, user_id)
+            if user_to_delete:
+                db.session.delete(user_to_delete)
+                db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise
+
+    @staticmethod
     def get_movies(user_id):
         """
         Fetch all movies for a specific user.
@@ -59,7 +75,7 @@ class DataManager:
             raise
 
     @staticmethod
-    def update_movie(movie_id, new_title):
+    def update_movie_title(movie_id, new_title):
         """
         Update the title of an existing movie.
         Raise SQLAlchemyError if database operation fails.
@@ -70,6 +86,23 @@ class DataManager:
             movie_to_update = db.session.get(Movie, movie_id)
             if movie_to_update:
                 movie_to_update.title = new_title
+                db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            raise
+
+    @staticmethod
+    def update_movie_rating(movie_id, new_rating):
+        """
+        Update the rating of an existing movie.
+        Raise SQLAlchemyError if database operation fails.
+        :param movie_id: ID of the movie to update
+        :param new_rating: new rating for the movie
+        """
+        try:
+            movie_to_update = db.session.get(Movie, movie_id)
+            if movie_to_update:
+                movie_to_update.rating = new_rating
                 db.session.commit()
         except SQLAlchemyError:
             db.session.rollback()
