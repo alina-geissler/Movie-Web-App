@@ -36,6 +36,16 @@ db.init_app(app)
 data_manager = DataManager()
 
 
+@app.template_filter('stars')
+def stars_filter(rating):
+    if not rating:
+        return 0
+    num_stars = int(rating)
+    return num_stars
+
+
+
+
 @app.route('/')
 def index():
     """
@@ -107,7 +117,7 @@ def add_movie(user_id):
     request_url = REQUEST_DATA_URL + movie_to_add + (f'&y={year}' if year else '')
 
     try:
-        res = requests.get(request_url, timeout=(3.0, 5.0))  # timeout: 3s connect, 5s read
+        res = requests.get(request_url, timeout=(3, 5))  # timeout: 3s connect, 5s read
         movie_info = res.json()
         if movie_info.get("Error") == "Movie not found!":
             flash('No matching movie found to add.', 'danger')
@@ -129,7 +139,7 @@ def add_movie(user_id):
         flash('Invalid response from OMDb.', 'danger')
         return redirect(url_for('list_movies', user_id=user_id))
     except requests.exceptions.RequestException:
-        flash(f'OMDb error occured.', 'danger')
+        flash(f'OMDb error occurred.', 'danger')
         return redirect(url_for('list_movies', user_id=user_id))
 
     title = movie_info.get('Title', movie_to_add)
@@ -147,12 +157,22 @@ def add_movie(user_id):
             pass
     # extract poster URL; validity checked via HTML <img> onerror fallback
     poster_url = movie_info.get('Poster') if movie_info.get('Poster') != 'N/A' else None
+    # rating = movie_info.get('imdbRating') if movie_info.get('imdbRating') != 'N/A' else None
+    imdb_rating = movie_info.get('imdbRating', 'N/A')
+    if imdb_rating != 'N/A':
+        try:
+            rating = float(imdb_rating)
+        except TypeError:
+            rating = None
+    else:
+        rating = None
 
     movie = Movie(
         title=title,
         director=director,
         release_year=release_year,
         poster_url=poster_url,
+        rating=rating,
         user_id=user_id
     )
     try:

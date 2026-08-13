@@ -28,6 +28,13 @@
             <br>
             <div class="release-year"><strong>Year:</strong> {{ movie.release_year or '-' }}</div>
             <div class="director"><strong>Director:</strong> {{ movie.director or '-' }}</div><br>
+            <div class="movie-rating"><strong>Rating:</strong> {{ movie.rating or '-' }}</div>
+            {% set num_stars = movie.rating | stars %}
+            <div class="star-rating">
+                {% for i in range(10) %}
+                    <span>{{ '★' if i < num_stars else '☆' }}</span>
+                {% endfor %}
+            </div><br>
             <form action="{{ url_for('delete_movie', user_id=movie.user_id, movie_id=movie.movie_id) }}" method="POST">
                 <input type="submit" value="Delete">
             </form>

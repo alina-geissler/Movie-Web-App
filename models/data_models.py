@@ -22,6 +22,7 @@ class Movie(db.Model):
     director = db.Column(db.String(100), nullable=True)
     release_year = db.Column(db.Integer, nullable=True)
     poster_url = db.Column(db.String, nullable=True)
+    rating = db.Column(db.Float, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     user = db.relationship('User', backref='movies')
 
