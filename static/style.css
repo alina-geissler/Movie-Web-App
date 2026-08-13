@@ -1,29 +1,14 @@
-.movie-grid {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+body {
+  background-color: #1b2a44;
 }
 
-.movie-grid li {
-  padding: 10px 15px;
-  text-align: left;
+h1 {
+  color: #f5f7fa;
 }
 
 .movie {
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
   background-color: #fdfaf4;
   border: 1px solid #ddd5be;
-  border-radius: 10px;
-  padding: 14px 12px 12px;
-  margin: 10px;
   box-shadow: 0 2px 8px rgba(26, 60, 52, 0.08);
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -33,16 +18,32 @@
   box-shadow: 0 6px 18px rgba(26, 60, 52, 0.15);
 }
 
-.director {
-    width: 200px;
-    overflow-wrap: break-word;
-}
 .movie-poster {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    width: 128px;
-    height: 193px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  width: 128px;
+  height: 193px;
+  align-self: center;
+  margin-top: 10px;
 }
 
-.user-list {
-    list-style-type: none;
+.director {
+  overflow-wrap: break-word;
+}
+
+.star-rating {
+  color: #e0a721;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+.user-card {
+  background-color: #fdfaf4;
+  border: 1px solid #ddd5be;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  color: #cfe0f5;
+  text-decoration: none;
 }

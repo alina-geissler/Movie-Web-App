@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Users</h1>
+<h1 class="mb-4">Users</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -11,23 +11,28 @@
 {% endif %}
 {% endwith %}
 
-<ul class="user-list">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mb-4">
     {% for user  in users %}
-        <li class="user-entry">
-            <div class="user-name"><strong>{{ user.name }}</strong></div>
-            <a href="{{ url_for('list_movies', user_id=user.user_id) }}"><button type="button">Show movies</button></a>
-            <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST" onsubmit="return confirm('Delete {{ user.name }} and all their movies? This cannot be undone.');">
-                <input type="submit" value="Delete User">
-            </form>
-        </li><br>
+        <div class="col">
+            <div class="user-card card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <a href="{{ url_for('list_movies', user_id=user.user_id) }}" class="btn btn-primary mt-auto mb-2">Show movies</a>
+                    <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="POST" onsubmit="return confirm('Delete {{ user.name }} and all their movies? This cannot be undone.');">
+                        <input type="submit" class="btn btn-outline-danger btn-sm w-100" value="Delete User">
+                    </form>
+                </div>
+            </div>
+        </div>
     {% endfor %}
-</ul>
+</div>
 
-<br>
-<form action="{{ url_for('create_user') }}" method="POST">
-    <label for="new_user"><strong>Add New User</strong></label><br>
-    <input type="text" id="new_user" name="new_user" placeholder="User Name" required>
-    <input type="submit" value="Add User">
+<form action="{{ url_for('create_user') }}" method="POST" class="card p-3" style="max-width: 400px;">
+    <label for="new_user" class="form-label"><strong>Add New User</strong></label>
+    <div class="input-group">
+        <input type="text" id="new_user" name="new_user" class="form-control" placeholder="User Name" required>
+        <input type="submit" class="btn btn-success" value="Add User">
+    </div>
 </form>
 
 {% endblock %}

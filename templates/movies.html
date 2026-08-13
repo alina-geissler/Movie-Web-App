@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-<a href="{{ url_for('index') }}" class="back-link">&larr; Back to Users</a><br><br>
+<a href="{{ url_for('index') }}" class="back-link">&larr; Back to Users</a>
 
-<h1>Movies for {{ user.name }}</h1>
+<h1 class="mt-3 mb-4">Movies for {{ user.name }}</h1>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
@@ -13,46 +13,50 @@
 {% endif %}
 {% endwith %}
 
-<ul class="movie-grid">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
     {% for movie in movies %}
-        <li class="movie">
-            <img class="movie-poster"
-                 src="{{ movie.poster_url  or '/static/images/fallback_poster.png' }}"
-                 alt="Poster of movie {{ movie.title }}"
-                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/fallback_poster.png') }}';">
-            <br><br>
-            <form action="{{ url_for('update_movie_title', user_id=user.user_id, movie_id=movie.movie_id) }}" method="POST">
-                <input type="text" id="update_movie_title" name="update_movie_title" value="{{ movie.title }}" aria-label="New Title" required>
-                <input type="submit" value="Update">
-            </form>
-            <br>
-            <div class="release-year"><strong>Year:</strong> {{ movie.release_year or '-' }}</div>
-            <div class="director"><strong>Director:</strong> {{ movie.director or '-' }}</div><br>
-            <div class="movie-rating"><strong>Rating:</strong> {{ movie.rating or '-' }}</div>
-            {% set num_stars = movie.rating | stars %}
-            <div class="star-rating">
-                {% for i in range(10) %}
-                    <span>{{ '★' if i < num_stars else '☆' }}</span>
-                {% endfor %}
-            </div><br>
-            <form action="{{ url_for('update_movie_rating', user_id=user.user_id, movie_id=movie.movie_id) }}" method="POST">
-                <input type="range" id="update_movie_rating" name="update_movie_rating" min="0" max="10" step="0.1" value="{{ movie.rating or 0 }}" aria-label="New Rating" oninput="this.nextElementSibling.value = this.value">
-                <output>{{ movie.rating or 0 }}</output>
-                <input type="submit" value="Update">
-            </form>
-            <br>
-            <form action="{{ url_for('delete_movie', user_id=movie.user_id, movie_id=movie.movie_id) }}" method="POST">
-                <input type="submit" value="Delete">
-            </form>
-        </li>
-    {% endfor %}
-</ul>
+        <div class="col">
+            <div class="movie card h-100">
+                <img class="movie-poster"
+                     src="{{ movie.poster_url  or '/static/images/fallback_poster.png' }}"
+                     alt="Poster of movie {{ movie.title }}"
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/fallback_poster.png') }}';">
+                <div class="card-body d-flex flex-column">
+                    <form action="{{ url_for('update_movie_title', user_id=user.user_id, movie_id=movie.movie_id) }}" method="POST" class="input-group input-group-sm mb-2">
+                        <input type="text" id="update_movie_title" name="update_movie_title" class="form-control" value="{{ movie.title }}" aria-label="New Title" required>
+                        <button class="btn btn-outline-primary" type="submit">Update</button>
+                    </form>
 
-<form action="{{ url_for('add_movie', user_id=user.user_id) }}" method="POST">
-    <h2>Add New Movie</h2>
-    <input type="text" id="new_movie" name="new_movie" placeholder="Movie title"  aria-label="New Movie" required><br>
-    <input type="number" id="release_year" name="release_year" placeholder="Year (optional)" aria-label="Release Year">
-    <input type="submit" value="Add Movie">
+                    <div class="release-year"><strong>Year:</strong> {{ movie.release_year or '-' }}</div>
+                    <div class="director"><strong>Director:</strong> {{ movie.director or '-' }}</div>
+                    <div class="movie-rating"><strong>Rating:</strong> {{ movie.rating or '-' }}</div>
+                    {% set num_stars = movie.rating | stars %}
+                    <div class="star-rating mb-2">
+                        {% for i in range(10) %}
+                            <span>{{ '★' if i < num_stars else '☆' }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <form action="{{ url_for('update_movie_rating', user_id=user.user_id, movie_id=movie.movie_id) }}" method="POST" class="d-flex align-items-center gap-2 mb-2">
+                        <input type="range" id="update_movie_rating" name="update_movie_rating" class="form-range" min="0" max="10" step="0.1" value="{{ movie.rating or 0 }}" aria-label="New Rating" oninput="this.nextElementSibling.value = this.value">
+                        <output>{{ movie.rating or 0 }}</output>
+                        <button class="btn btn-outline-warning btn-sm" type="submit">Set</button>
+                    </form>
+
+                    <form action="{{ url_for('delete_movie', user_id=movie.user_id, movie_id=movie.movie_id) }}" method="POST" class="mt-auto">
+                        <button class="btn btn-outline-danger btn-sm w-100" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<form action="{{ url_for('add_movie', user_id=user.user_id) }}" method="POST" class="card p-3 mt-4" style="max-width: 400px;">
+    <h2 class="h5">Add New Movie</h2>
+    <input type="text" id="new_movie" name="new_movie" class="form-control mb-2" placeholder="Movie title" aria-label="New Movie" required>
+    <input type="number" id="release_year" name="release_year" class="form-control mb-2" placeholder="Year (optional)" aria-label="Release Year">
+    <input type="submit" class="btn btn-success" value="Add Movie">
 </form>
 
 {% endblock %}
